@@ -13,11 +13,13 @@ pipeline_cpu uut (
 always #5 clk = ~clk;
 
 initial begin
-    $display("Time\tClock\tPC");
-    clk = 0;
-    reset = 1;
-    #10 reset = 0;
-    #100 $finish;
+    $monitor("%g PC=%h | ALU=%h | WB_Reg=%d, Data=%h",
+        $time, uut.pc, uut.ex_alu_result, uut.wb_rd, uut.wb_result);
+        $display("Time\tClock\tPC");
+        clk = 0;
+        reset = 1;
+        #10 reset = 0;
+        #100 $finish;
 end
 
 endmodule

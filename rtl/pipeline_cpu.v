@@ -11,6 +11,19 @@ wire [6:0] opcode;
 wire [2:0] funct3;
 wire [6:0] funct7;
 
+// EX → MEM
+wire [31:0] ex_alu_result;
+wire [4:0] ex_rd;
+
+// MEM → WB
+wire [31:0] mem_alu_result;
+wire [4:0] mem_rd;
+
+// WB outputs
+wire [31:0] wb_result;
+wire [4:0] wb_rd;
+wire wb_reg_write;
+
 // IF
 if_stage if_stage_inst (
     .clk(clk),
@@ -82,6 +95,32 @@ ex_stage ex_stage_inst (
     .funct3(ex_funct3),
     .funct7(ex_funct7),
     .alu_result(alu_result)
+);
+
+mem_stage mem_stage_inst (
+    .alu_result_in(ex_alu_result),
+    .mem_result_out(mem_alu_result)
+);
+
+wb_stage wb_stage_inst (
+    .wb_result_in(mem_alu_result),
+    .rd_in(mem_rd),
+    .reg_write_out(wb_reg_write),
+    .write_reg_out(wb_rd),
+    .write_data_out(wb_result)
+);
+
+id_stage id_stage_inst (
+    .instruction(instr),
+    .clk(clk),
+    .reg_write(wb_reg_write),
+    .write_data(wb_result),
+    .write_reg(wb_rd),
+    .rs1(rs1),
+    .rs2(rs2),
+    .rd(rd),
+    .operand1(op1),
+    .operand2(op2)
 );
 
 endmodule

@@ -16,6 +16,18 @@ module pipeline_registers (
     input [2:0] id_funct3_in,
     input [6:0] id_funct7_in,
 
+    // EX/MEM
+    input [31:0] ex_alu_result_in,
+    input [4:0] ex_rd_in,
+    output reg [31:0] mem_alu_result_out,
+    output reg [4:0] mem_rd_out,
+
+    // MEM/WB
+    input [31:0] mem_result_in,
+    input [4:0] mem_rd_in,
+    output reg [31:0] wb_result_out,
+    output reg [4:0] wb_rd_out
+
     output reg [31:0] ex_op1_out,
     output reg [31:0] ex_op2_out,
     output reg [4:0] ex_rs1_out, ex_rs2_out, ex_rd_out,
@@ -50,6 +62,14 @@ always @(posedge clk or posedge reset) begin
         ex_opcode_out <= id_opcode_in;
         ex_funct3_out <= id_funct3_in;
         ex_funct7_out <= id_funct7_in;
+
+        // EX/MEM
+        mem_alu_result_out <= ex_alu_result_in;
+        mem_rd_out <= ex_rd_in;
+
+        // MEM/WB
+        wb_result_out <= mem_result_in;
+        wb_rd_out <= mem_rd_in;
     end
 end
 
